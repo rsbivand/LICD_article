@@ -18,6 +18,11 @@ library(doParallel)
 # Importing shapefile
 ## Character types aggregated into 3 cats: 
 ## medieval, post-medieval, modern
+## https://archaeologydataservice.ac.uk/catalogue/adsdata/arch-2090-1/dissemination/zip/rawhlc.zip
+
+## It can be cited by https://doi.org/10.5284/1032952
+
+
 hlc<-readOGR("rawhlc/Torridge_HLC_3b.shp")
 hlc$class<-ifelse(hlc$PERIOD1=="Modern",1,ifelse(hlc$PERIOD1=="Post-medieval",2,3))
 hlc$class[is.na(hlc$class)]<-3
