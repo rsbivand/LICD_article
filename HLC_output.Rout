@@ -34,7 +34,7 @@ downloaded 22.1 MB
 > fls <- unzip(file.path(td, "rawhlc.zip"), exdir=td, overwrite=TRUE)
 
 > devon_hlc <- st_read(file.path(td, "rawhlc.shp"), crs=27700)
-Reading layer `rawhlc' from data source `/tmp/Rtmp9XWHzc/rawhlc.shp' using driver `ESRI Shapefile'
+Reading layer `rawhlc' from data source `/tmp/Rtmp6KAHlZ/rawhlc.shp' using driver `ESRI Shapefile'
 Simple feature collection with 49485 features and 36 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -67,7 +67,9 @@ geographic CRS: WGS 84
 
 > ## Map classes
 > 
-> HLC_map <- tm_shape(hlc) + tm_fill("class", palette="viridis", title="Character\nTypes") + tm_compass(position=c("left", "bottom ..." ... [TRUNCATED] 
+> HLC_map <- tm_shape(hlc) + 
++   tm_fill("class", palette="viridis", title="Character\nTypes") + 
++   tm_compass(position=c("left ..." ... [TRUNCATED] 
 
 > # tiff("Torridge_HLC.tiff", width=12, height=10, units="cm", res=300)
 > # HLC_map
@@ -265,7 +267,9 @@ Medieval      0.1301304
 
 > hlc$Type1 <- factor(Type1)
 
-> LICD_map <- tm_shape(hlc) + tm_fill("Type1", palette="viridis", title="LICD", textNA="No cluster") + tm_compass(position=c("left", "bottom"))
+> LICD_map <- tm_shape(hlc) + 
++   tm_fill("Type1", palette="viridis", title="LICD", textNA="No cluster") + 
++   tm_compass(position=c("left", "bottom ..." ... [TRUNCATED] 
 
 > # tiff("Torridge_LICD.tiff", width=14, height=10, units="cm", res=300)
 > # LICD_map
@@ -317,7 +321,7 @@ attached base packages:
 
 other attached packages:
 [1] Matrix_1.2-18 units_0.6-7   tmap_3.2      spdep_1.1-5   spData_0.3.8 
-[6] sp_1.4-4      sf_0.9-7     
+[6] sp_1.4-4      sf_0.9-6     
 
 loaded via a namespace (and not attached):
  [1] gtools_3.8.2       tidyselect_1.1.0   purrr_0.3.4        splines_4.0.3     

@@ -41,7 +41,10 @@ hlc$class <- ordered(hlc$class, levels=c("Modern", "Post-medieval", "Medieval"))
 
 ## Map classes
 
-HLC_map <- tm_shape(hlc) + tm_fill("class", palette="viridis", title="Character\nTypes") + tm_compass(position=c("left", "bottom"))
+HLC_map <- tm_shape(hlc) + 
+  tm_fill("class", palette="viridis", title="Character\nTypes") + 
+  tm_compass(position=c("left", "bottom")) + 
+  tm_scale_bar(breaks=c(0, 5, 10), position=c("center", "bottom"))
 
 # tiff("Torridge_HLC.tiff", width=12, height=10, units="cm", res=300)
 # HLC_map
@@ -127,7 +130,10 @@ Type1 <-  Type
 hlc$Type <- Type
 is.na(Type1) <- Type1 == "No cluster"
 hlc$Type1 <- factor(Type1)
-LICD_map <- tm_shape(hlc) + tm_fill("Type1", palette="viridis", title="LICD", textNA="No cluster") + tm_compass(position=c("left", "bottom"))
+LICD_map <- tm_shape(hlc) + 
+  tm_fill("Type1", palette="viridis", title="LICD", textNA="No cluster") + 
+  tm_compass(position=c("left", "bottom")) + 
+  tm_scale_bar(breaks=c(0, 5, 10), position=c("center", "bottom"))
 # tiff("Torridge_LICD.tiff", width=14, height=10, units="cm", res=300)
 # LICD_map
 # dev.off()

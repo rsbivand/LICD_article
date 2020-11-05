@@ -10,7 +10,10 @@ data("BarmoseI.pp")
 
 # Convert to stars array
 library(stars)
-rast <- st_as_stars(BarmoseI.grid[,c(2,1,3)])
+BarmoseI.grid1 <- BarmoseI.grid
+if (packageVersion("stars") < "0.4.4") BarmoseI.grid1$North <- BarmoseI.grid1$North + 1 
+# data registed to SW cell corner, stars takes NW cell corner until 0.4-4
+rast <- st_as_stars(BarmoseI.grid1[,c(2,1,3)])
 st_crs(rast) <- 32662
 rast1 <- rast
 rast1$logp1_Debitage <- log10(rast1$Debitage+1)
@@ -23,7 +26,12 @@ cores <- st_as_sf(BarmoseI.pp[BarmoseI.pp[,3]=="10",], coords=c("East", "North")
 st_crs(cores) <- 32662
 
 library(tmap)
-Log_Deb_map <- tm_shape(rast1) + tm_raster("logp1_Debitage", n=7, palette="viridis", title="Debitage\n(log count)") + tm_shape(cores) + tm_symbols() + tm_legend(position=c("left", "bottom"))
+Log_Deb_map <- tm_shape(rast1, unit="m") + 
+  tm_raster("logp1_Debitage", n=7, palette="viridis",
+            title="Debitage\n(log count)") + 
+  tm_shape(cores, unit="m") + tm_symbols() + 
+  tm_legend(position=c("left", "bottom")) + 
+  tm_scale_bar(breaks=c(0,1,2), position=c("right", "bottom"))
 jpeg("Barmose_Grid_Cores.jpeg", width=12, height=10, units="cm", res=300)
 Log_Deb_map
 dev.off()
@@ -32,7 +40,11 @@ dev.off()
 barmose$cores <- sapply(st_intersects(barmose, cores), length)
 barmose$class <- factor((barmose$cores>0)+0, levels=c(0, 1), labels=c("NC", "C"))
 
-class_map <- tm_shape(barmose) + tm_fill("class", palette="viridis") + tm_shape(cores) + tm_symbols()
+class_map <- tm_shape(barmose, unit="m") + 
+  tm_fill("class", palette="viridis") + 
+  tm_shape(cores, unit="m") + 
+  tm_symbols() + 
+  tm_scale_bar(breaks=c(0,1,2), position=c("right", "bottom"))
 jpeg("Barmose_class_Cores.jpeg", width=12, height=10, units="cm", res=300)
 class_map
 dev.off()
@@ -187,7 +199,9 @@ for (i in 1:length(adata)){
 
 barmose$Type <- factor(Type)
 
-types_map <- tm_shape(barmose) + tm_fill("Type", palette="viridis")
+types_map <- tm_shape(barmose, unit="m") + 
+  tm_fill("Type", palette="viridis") + 
+  tm_scale_bar(breaks=c(0,1,2), position=c("right", "bottom"))
 jpeg("Barmose_types_Cores.jpeg", width=12, height=10, units="cm", res=300)
 types_map
 dev.off()
@@ -200,7 +214,9 @@ LICDClass <- interaction(barmose$class, barmose$Type)
 
 barmose$LICDClass <- factor(LICDClass, levels=c("C.Hot only", "C.Clump only (H)", "C.No cluster", "C.Cold only", "C.Clump only (C)", "NC.Hot only", "NC.Clump only (H)", "NC.No cluster", "NC.Cold only", "NC.Clump only (C)"))
 
-LICDClass_map <- tm_shape(barmose) + tm_fill("LICDClass", palette="-viridis", title="Classes + LICD")
+LICDClass_map <- tm_shape(barmose, unit="m") + 
+  tm_fill("LICDClass", palette="-viridis", title="Classes + LICD") + 
+  tm_scale_bar(breaks=c(0,1,2), position=c("right", "bottom"))
 jpeg("Barmose_LICD_class.jpeg", width=18, height=15, units="cm", res=300)
 LICDClass_map
 dev.off()
