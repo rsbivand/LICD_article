@@ -52,8 +52,6 @@ HLC_map <- tm_shape(hlc) +
 jpeg("Torridge_HLC.jpeg", width=15, height=15, units="cm", res=300)
 HLC_map
 dev.off()
-# library(mapview)
-# mapview(hlc, zcol="class")
 
 ## Create neighbours
 nb1 <- poly2nb(hlc, snap=4, row.names=as.character(hlc$ID))
@@ -140,8 +138,6 @@ LICD_map <- tm_shape(hlc) +
 jpeg("Torridge_LICD.jpeg", width=15, height=15, units="cm", res=300)
 LICD_map
 dev.off()
-# library(mapview)
-# mapview(hlc, zcol="Type")
 
 
 # HLC & LICD
@@ -151,6 +147,19 @@ both <- LICD_map + tm_facets("class", nrow=2)
 jpeg("Torridge_HLC_LICD.jpeg",width=30,height=25,units="cm",res=300)
 both
 dev.off()
+
+# mapview installed from "r-spatial/mapview" after #336 #327 #323
+library(mapview)
+packageVersion("mapview")
+if (unname(sf_extSoftVersion()["GDAL"]) >= "3.1.0") mapviewOptions(fgb = FALSE)
+file.remove("HLC_map.html")
+file.remove("HLC_map.zip")
+cl <- mapview(hlc, zcol="class")
+ty <- mapview(hlc, zcol="Type")
+mapshot(cl + ty, url = paste0(getwd(), "/HLC_map.html"))
+zip("HLC_map.zip", "HLC_map.html")
+file.remove("HLC_map.html")
+
 
 
 sessionInfo()
