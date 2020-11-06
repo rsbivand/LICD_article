@@ -34,7 +34,7 @@ downloaded 22.1 MB
 > fls <- unzip(file.path(td, "rawhlc.zip"), exdir=td, overwrite=TRUE)
 
 > devon_hlc <- st_read(file.path(td, "rawhlc.shp"), crs=27700)
-Reading layer `rawhlc' from data source `/tmp/Rtmp6KAHlZ/rawhlc.shp' using driver `ESRI Shapefile'
+Reading layer `rawhlc' from data source `/tmp/RtmpdXmreM/rawhlc.shp' using driver `ESRI Shapefile'
 Simple feature collection with 49485 features and 36 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -71,10 +71,10 @@ geographic CRS: WGS 84
 +   tm_fill("class", palette="viridis", title="Character\nTypes") + 
 +   tm_compass(position=c("left ..." ... [TRUNCATED] 
 
-> # tiff("Torridge_HLC.tiff", width=12, height=10, units="cm", res=300)
+> # tiff("Torridge_HLC.tiff", width=15, height=15, units="cm", res=300)
 > # HLC_map
 > # dev.off()
-> jpeg("Torridge_HLC.jpeg", width=12, height=10, uni .... [TRUNCATED] 
+> jpeg("Torridge_HLC.jpeg", width=15, height=15, uni .... [TRUNCATED] 
 
 > HLC_map
 
@@ -271,13 +271,12 @@ Medieval      0.1301304
 +   tm_fill("Type1", palette="viridis", title="LICD", textNA="No cluster") + 
 +   tm_compass(position=c("left", "bottom ..." ... [TRUNCATED] 
 
-> # tiff("Torridge_LICD.tiff", width=14, height=10, units="cm", res=300)
+> # tiff("Torridge_LICD.tiff", width=15, height=15, units="cm", res=300)
 > # LICD_map
 > # dev.off()
-> jpeg("Torridge_LICD.jpeg", width=14, height=10,  .... [TRUNCATED] 
+> jpeg("Torridge_LICD.jpeg", width=15, height=15,  .... [TRUNCATED] 
 
 > LICD_map
-Some legend labels were too wide. These labels have been resized to 0.65. Increase legend.width (argument of tm_layout) to make the legend wider and therefore the labels larger.
 
 > dev.off()
 null device 
@@ -289,9 +288,9 @@ null device
 > 
 > # HLC & LICD
 > 
-> both <- LICD_map + tm_facets("class", nrow=1)
+> both <- LICD_map + tm_facets("class", nrow=2)
 
-> jpeg("Torridge_HLC_LICD.jpeg",width=45,height=10,units="cm",res=300)
+> jpeg("Torridge_HLC_LICD.jpeg",width=30,height=25,units="cm",res=300)
 
 > both
 

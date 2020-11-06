@@ -44,12 +44,12 @@ hlc$class <- ordered(hlc$class, levels=c("Modern", "Post-medieval", "Medieval"))
 HLC_map <- tm_shape(hlc) + 
   tm_fill("class", palette="viridis", title="Character\nTypes") + 
   tm_compass(position=c("left", "bottom")) + 
-  tm_scale_bar(breaks=c(0, 5, 10), position=c("center", "bottom"))
+  tm_scale_bar(breaks=c(0, 5, 10), position=c(0.375, 0.00001))
 
-# tiff("Torridge_HLC.tiff", width=12, height=10, units="cm", res=300)
+# tiff("Torridge_HLC.tiff", width=15, height=15, units="cm", res=300)
 # HLC_map
 # dev.off()
-jpeg("Torridge_HLC.jpeg", width=12, height=10, units="cm", res=300)
+jpeg("Torridge_HLC.jpeg", width=15, height=15, units="cm", res=300)
 HLC_map
 dev.off()
 # library(mapview)
@@ -133,11 +133,11 @@ hlc$Type1 <- factor(Type1)
 LICD_map <- tm_shape(hlc) + 
   tm_fill("Type1", palette="viridis", title="LICD", textNA="No cluster") + 
   tm_compass(position=c("left", "bottom")) + 
-  tm_scale_bar(breaks=c(0, 5, 10), position=c("center", "bottom"))
-# tiff("Torridge_LICD.tiff", width=14, height=10, units="cm", res=300)
+  tm_scale_bar(breaks=c(0, 5, 10), position=c(0.375, 0.00001))
+# tiff("Torridge_LICD.tiff", width=15, height=15, units="cm", res=300)
 # LICD_map
 # dev.off()
-jpeg("Torridge_LICD.jpeg", width=14, height=10, units="cm", res=300)
+jpeg("Torridge_LICD.jpeg", width=15, height=15, units="cm", res=300)
 LICD_map
 dev.off()
 # library(mapview)
@@ -146,9 +146,9 @@ dev.off()
 
 # HLC & LICD
 
-both <- LICD_map + tm_facets("class", nrow=1)
+both <- LICD_map + tm_facets("class", nrow=2)
 
-jpeg("Torridge_HLC_LICD.jpeg",width=45,height=10,units="cm",res=300)
+jpeg("Torridge_HLC_LICD.jpeg",width=30,height=25,units="cm",res=300)
 both
 dev.off()
 

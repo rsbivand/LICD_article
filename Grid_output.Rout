@@ -16,11 +16,15 @@ Linking to GEOS 3.9.0dev, GDAL 3.2.0, PROJ 7.2.0
 
 > BarmoseI.grid1 <- BarmoseI.grid
 
-> if (packageVersion("stars") < "0.4.4") BarmoseI.grid1$North <- BarmoseI.grid1$North + 1 
+> if (packageVersion("stars") < "0.4.4") {
++   BarmoseI.grid1$North <- BarmoseI.grid1$North + 0.5
++   BarmoseI.grid1$East <- BarmoseI.grid1$East - 0.5 .... [TRUNCATED] 
 
-> # data registed to SW cell corner, stars takes NW cell corner until 0.4-4
-> rast <- st_as_stars(BarmoseI.grid1[,c(2,1,3)])
+> # data registed to SW cell corner, stars bug 0.4-2, 0.4-3 and 0.4-4 before
+> # late October 2020; stars >= 0.4-2 required by current tmap;
+> # stars .... [TRUNCATED] 
 
+> # impose a plate carree projection to satisfy tmap
 > st_crs(rast) <- 32662
 
 > rast1 <- rast
@@ -36,6 +40,7 @@ Linking to GEOS 3.9.0dev, GDAL 3.2.0, PROJ 7.2.0
 
 > cores <- st_as_sf(BarmoseI.pp[BarmoseI.pp[,3]=="10",], coords=c("East", "North"))
 
+> # impose a plate carree projection to satisfy tmap
 > st_crs(cores) <- 32662
 
 > library(tmap)
@@ -45,7 +50,7 @@ Linking to GEOS 3.9.0dev, GDAL 3.2.0, PROJ 7.2.0
 +             title="Debitage\n(log count)") + 
  .... [TRUNCATED] 
 
-> jpeg("Barmose_Grid_Cores.jpeg", width=12, height=10, units="cm", res=300)
+> jpeg("Barmose_Grid_Cores.jpeg", width=15, height=17, units="cm", res=300)
 
 > Log_Deb_map
 
@@ -55,15 +60,32 @@ null device
 
 > barmose$cores <- sapply(st_intersects(barmose, cores), length)
 
-> barmose$class <- factor((barmose$cores>0)+0, levels=c(0, 1), labels=c("NC", "C"))
+> barmose$class <- factor((barmose$cores>0)+0, levels=c(0, 1), labels=c("No Core", "Core"))
 
+> sum(barmose$cores) # 86 for stars 0.4-4 and using sf::st_intersects
+[1] 86
+
+> table(barmose$cores)
+
+ 0  1  2  3  4  5  6  9 
+69 18 11  2  2  1  3  1 
+
+> #  0  1  2  3  4  5  6  9 
+> # 69 18 11  2  2  1  3  1 
+> table(barmose$class)
+
+No Core    Core 
+     69      38 
+
+> # NC  C 
+> # 69 38 
+> 
 > class_map <- tm_shape(barmose, unit="m") + 
 +   tm_fill("class", palette="viridis") + 
 +   tm_shape(cores, unit="m") + 
-+   tm_symbols() + 
-+   tm_s .... [TRUNCATED] 
++   .... [TRUNCATED] 
 
-> jpeg("Barmose_class_Cores.jpeg", width=12, height=10, units="cm", res=300)
+> jpeg("Barmose_class_Cores.jpeg", width=15, height=17, units="cm", res=300)
 
 > class_map
 
@@ -160,13 +182,13 @@ Registered S3 methods overwritten by 'spatialreg':
 > jcps <- do.call("c", jc.barmose.p)[-c(4, 8)]
 
 > (jc_out <- data.frame(order=rep(c("First", "Second"), each=3), JCS=rownames(jcs), as.data.frame(cbind(jcs, pvalue=jcps)), row.names=NULL))
-   order   JCS Joincount  Expected  Variance     z.value     pvalue
-1  First NC:NC 22.632143 22.132075 0.5678672  0.66359813 0.25347378
-2  First   C:C  8.160119  6.632075 0.4851153  2.19388198 0.01412195
-3  First  C:NC 22.707738 24.735849 1.8256763 -1.50099701 0.93332183
-4 Second NC:NC 21.641466 22.132075 0.4986978 -0.69473158 0.75638823
-5 Second   C:C  7.108536  6.632075 0.3352042  0.82294749 0.20526893
-6 Second  C:NC 24.749998 24.735849 1.1140353  0.01340516 0.49465227
+   order             JCS Joincount  Expected  Variance     z.value     pvalue
+1  First No Core:No Core 22.632143 22.132075 0.5678672  0.66359813 0.25347378
+2  First       Core:Core  8.160119  6.632075 0.4851153  2.19388198 0.01412195
+3  First    Core:No Core 22.707738 24.735849 1.8256763 -1.50099701 0.93332183
+4 Second No Core:No Core 21.641466 22.132075 0.4986978 -0.69473158 0.75638823
+5 Second       Core:Core  7.108536  6.632075 0.3352042  0.82294749 0.20526893
+6 Second    Core:No Core 24.749998 24.735849 1.1140353  0.01340516 0.49465227
 
 > write.csv(jc_out, "barmose_jc_out.csv", row.names=FALSE)
 
@@ -251,7 +273,7 @@ Registered S3 methods overwritten by 'spatialreg':
 +   tm_fill("Type", palette="viridis") + 
 +   tm_scale_bar(breaks=c(0,1,2), position=c("right", "bottom" .... [TRUNCATED] 
 
-> jpeg("Barmose_types_Cores.jpeg", width=12, height=10, units="cm", res=300)
+> jpeg("Barmose_types_Cores.jpeg", width=15, height=17, units="cm", res=300)
 
 > types_map
 
@@ -261,15 +283,15 @@ null device
 
 > # Plot Cores + LICD - TIFF + JPEG
 > 
-> LICDClass <- interaction(barmose$class, barmose$Type)
+> LICDClass <- interaction(barmose$class, barmose$Type, sep=" ")
 
-> barmose$LICDClass <- factor(LICDClass, levels=c("C.Hot only", "C.Clump only (H)", "C.No cluster", "C.Cold only", "C.Clump only (C)", "NC.Hot only",  .... [TRUNCATED] 
+> barmose$LICDClass <- factor(LICDClass, levels=c("Core Hot only", "Core Clump only (Hot)", "Core No cluster", "Core Cold only", "Core Clump only (Col ..." ... [TRUNCATED] 
 
 > LICDClass_map <- tm_shape(barmose, unit="m") + 
 +   tm_fill("LICDClass", palette="-viridis", title="Classes + LICD") + 
 +   tm_scale_bar(breaks=c(0, .... [TRUNCATED] 
 
-> jpeg("Barmose_LICD_class.jpeg", width=18, height=15, units="cm", res=300)
+> jpeg("Barmose_LICD_class.jpeg", width=15, height=17, units="cm", res=300)
 
 > LICDClass_map
 
