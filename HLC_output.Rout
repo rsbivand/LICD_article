@@ -34,7 +34,7 @@ downloaded 22.1 MB
 > fls <- unzip(file.path(td, "rawhlc.zip"), exdir=td, overwrite=TRUE)
 
 > devon_hlc <- st_read(file.path(td, "rawhlc.shp"), crs=27700)
-Reading layer `rawhlc' from data source `/tmp/RtmpdXmreM/rawhlc.shp' using driver `ESRI Shapefile'
+Reading layer `rawhlc' from data source `/tmp/RtmpzdAiOt/rawhlc.shp' using driver `ESRI Shapefile'
 Simple feature collection with 49485 features and 36 fields
 geometry type:  MULTIPOLYGON
 dimension:      XY
@@ -338,6 +338,10 @@ loaded via a namespace (and not attached):
 [49] tibble_3.0.4       dichromat_2.0-0    crayon_1.3.4       pkgconfig_2.0.3   
 [53] MASS_7.3-53        ellipsis_0.3.1     R6_2.4.1           boot_1.3-25       
 [57] nlme_3.1-150       compiler_4.0.3    
+
+> sf_extSoftVersion()
+          GEOS           GDAL         proj.4 GDAL_with_GEOS     USE_PROJ_H 
+    "3.9.0dev"        "3.2.0"        "7.2.0"         "true"         "true" 
 
 > sink(type = "message")
 

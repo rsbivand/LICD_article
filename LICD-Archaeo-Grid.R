@@ -7,14 +7,26 @@ library(archdata)
 data("BarmoseI.grid")
 data("BarmoseI.pp")
 
+Easts <- sort(unique(BarmoseI.grid$East))
+Norths <- sort(unique(BarmoseI.grid$North))
+
+BarmoseI_Cores.pp <- BarmoseI.pp[BarmoseI.pp[, "Label"]=="Cores",]
+
+library(spatstat)
+BarmoseI_Cores.ppp <- ppp(BarmoseI_Cores.pp$East, BarmoseI_Cores.pp$North, window=owin(xrange=c(0, max(Easts)+1), yrange=c(0, max(Norths)+1)))
+summary(BarmoseI_Cores.ppp)
 
 # Convert to stars array
 library(stars)
+packageVersion("stars")
 BarmoseI.grid1 <- BarmoseI.grid
 if (packageVersion("stars") < "0.4.4") {
+  BarmoseI.grid1$North <- BarmoseI.grid1$North + 1
+} else {
   BarmoseI.grid1$North <- BarmoseI.grid1$North + 0.5
-  BarmoseI.grid1$East <- BarmoseI.grid1$East - 0.5
+  BarmoseI.grid1$East <- BarmoseI.grid1$East + 0.5
 }
+
 # data registed to SW cell corner, stars bug 0.4-2, 0.4-3 and 0.4-4 before
 # late October 2020; stars >= 0.4-2 required by current tmap;
 # stars 0.4-4 installed using remotes::install_github("r-spatial/stars")
@@ -30,9 +42,22 @@ rast1$logp1_Debitage <- log10(rast1$Debitage+1)
 library(sf)
 barmose0 <- st_as_sf(rast)
 barmose <- barmose0[!is.na(barmose0$Debitage),]
-cores <- st_as_sf(BarmoseI.pp[BarmoseI.pp[,3]=="10",], coords=c("East", "North"))
+cores <- st_as_sf(BarmoseI_Cores.pp, coords=c("East", "North"))
 # impose a plate carree projection to satisfy tmap
 st_crs(cores) <- 32662
+
+jpeg("Barmose_Grid_Check.jpeg", width=15, height=17, units="cm", res=300)
+opar <- par(no.readonly=TRUE)
+par(mar=c(0,0,0,0)+0.1)
+plot(BarmoseI_Cores.ppp, chars=24, pt.bg="grey", cex=0.7, legend=FALSE)
+abline(v=Easts, lwd=0.5, lty=2)
+abline(h=Norths, lwd=0.5, lty=2)
+points(North ~ East, BarmoseI.grid, pch=3)
+plot(st_geometry(barmose), add=TRUE, lwd=0.5, border="orange")
+par(opar)
+dev.off()
+
+
 
 library(tmap)
 Log_Deb_map <- tm_shape(rast1, unit="m") + 
@@ -229,7 +254,7 @@ dev.off()
 
 LICDClass <- interaction(barmose$class, barmose$Type, sep=" ")
 
-barmose$LICDClass <- factor(LICDClass, levels=c("Core Hot only", "Core Clump only (Hot)", "Core No cluster", "Core Cold only", "Core Clump only (Cold)", "No Core Hot only", "No Core Clump only (Hot)", "No Core No cluster", "No Core Cold only", "No Core Clump only (Cold)"))
+barmose$LICDClass <- factor(LICDClass, levels=c("Core Hot only", "Core Clump only (Hot)", "Core Hot Clump", "Core No cluster", "No Core Hot only", "No Core No cluster", "No Core Cold only", "No Core Clump only (Cold)"))
 
 LICDClass_map <- tm_shape(barmose, unit="m") + 
   tm_fill("LICDClass", palette="-viridis", title="Classes + LICD") + 
@@ -239,6 +264,7 @@ LICDClass_map
 dev.off()
 
 sessionInfo()
+sf_extSoftVersion()
 sink(type = "message")
 sink()
 

@@ -154,6 +154,7 @@ dev.off()
 
 
 sessionInfo()
+sf_extSoftVersion()
 sink(type = "message")
 sink()
 

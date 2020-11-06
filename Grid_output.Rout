@@ -8,17 +8,50 @@
 
 > data("BarmoseI.pp")
 
+> Easts <- sort(unique(BarmoseI.grid$East))
+
+> Norths <- sort(unique(BarmoseI.grid$North))
+
+> BarmoseI_Cores.pp <- BarmoseI.pp[BarmoseI.pp[, "Label"]=="Cores",]
+
+> library(spatstat)
+Loading required package: spatstat.data
+Loading required package: nlme
+Loading required package: rpart
+
+spatstat 1.64-1       (nickname: ‘Help you I can, yes!’) 
+For an introduction to spatstat, type ‘beginner’ 
+
+
+Note: spatstat version 1.64-1 is out of date by more than 6 months; we recommend upgrading to the latest version.
+
+> BarmoseI_Cores.ppp <- ppp(BarmoseI_Cores.pp$East, BarmoseI_Cores.pp$North, window=owin(xrange=c(0, max(Easts)+1), yrange=c(0, max(Norths)+1)))
+
+> summary(BarmoseI_Cores.ppp)
+Planar point pattern:  81 points
+Average intensity 0.4821429 points per square unit
+
+Coordinates are given to 2 decimal places
+i.e. rounded to the nearest multiple of 0.01 units
+
+Window: rectangle = [0, 12] x [0, 14] units
+Window area = 168 square units
+
 > # Convert to stars array
 > library(stars)
 Loading required package: abind
 Loading required package: sf
 Linking to GEOS 3.9.0dev, GDAL 3.2.0, PROJ 7.2.0
 
+> packageVersion("stars")
+[1] ‘0.4.4’
+
 > BarmoseI.grid1 <- BarmoseI.grid
 
 > if (packageVersion("stars") < "0.4.4") {
-+   BarmoseI.grid1$North <- BarmoseI.grid1$North + 0.5
-+   BarmoseI.grid1$East <- BarmoseI.grid1$East - 0.5 .... [TRUNCATED] 
++   BarmoseI.grid1$North <- BarmoseI.grid1$North + 1
++ } else {
++   BarmoseI.grid1$North <- BarmoseI.grid1$ .... [TRUNCATED] 
 
 > # data registed to SW cell corner, stars bug 0.4-2, 0.4-3 and 0.4-4 before
 > # late October 2020; stars >= 0.4-2 required by current tmap;
@@ -38,10 +71,32 @@ Linking to GEOS 3.9.0dev, GDAL 3.2.0, PROJ 7.2.0
 
 > barmose <- barmose0[!is.na(barmose0$Debitage),]
 
-> cores <- st_as_sf(BarmoseI.pp[BarmoseI.pp[,3]=="10",], coords=c("East", "North"))
+> cores <- st_as_sf(BarmoseI_Cores.pp, coords=c("East", "North"))
 
 > # impose a plate carree projection to satisfy tmap
 > st_crs(cores) <- 32662
+
+> jpeg("Barmose_Grid_Check.jpeg", width=15, height=17, units="cm", res=300)
+
+> opar <- par(no.readonly=TRUE)
+
+> par(mar=c(0,0,0,0)+0.1)
+
+> plot(BarmoseI_Cores.ppp, chars=24, pt.bg="grey", cex=0.7, legend=FALSE)
+
+> abline(v=Easts, lwd=0.5, lty=2)
+
+> abline(h=Norths, lwd=0.5, lty=2)
+
+> points(North ~ East, BarmoseI.grid, pch=3)
+
+> plot(st_geometry(barmose), add=TRUE, lwd=0.5, border="orange")
+
+> par(opar)
+
+> dev.off()
+null device 
+          1 
 
 > library(tmap)
 
@@ -63,12 +118,12 @@ null device
 > barmose$class <- factor((barmose$cores>0)+0, levels=c(0, 1), labels=c("No Core", "Core"))
 
 > sum(barmose$cores) # 86 for stars 0.4-4 and using sf::st_intersects
-[1] 86
+[1] 84
 
 > table(barmose$cores)
 
- 0  1  2  3  4  5  6  9 
-69 18 11  2  2  1  3  1 
+ 0  1  2  3  4  5  6  7 
+69 19  8  2  5  2  1  1 
 
 > #  0  1  2  3  4  5  6  9 
 > # 69 18 11  2  2  1  3  1 
@@ -182,13 +237,13 @@ Registered S3 methods overwritten by 'spatialreg':
 > jcps <- do.call("c", jc.barmose.p)[-c(4, 8)]
 
 > (jc_out <- data.frame(order=rep(c("First", "Second"), each=3), JCS=rownames(jcs), as.data.frame(cbind(jcs, pvalue=jcps)), row.names=NULL))
-   order             JCS Joincount  Expected  Variance     z.value     pvalue
-1  First No Core:No Core 22.632143 22.132075 0.5678672  0.66359813 0.25347378
-2  First       Core:Core  8.160119  6.632075 0.4851153  2.19388198 0.01412195
-3  First    Core:No Core 22.707738 24.735849 1.8256763 -1.50099701 0.93332183
-4 Second No Core:No Core 21.641466 22.132075 0.4986978 -0.69473158 0.75638823
-5 Second       Core:Core  7.108536  6.632075 0.3352042  0.82294749 0.20526893
-6 Second    Core:No Core 24.749998 24.735849 1.1140353  0.01340516 0.49465227
+   order             JCS Joincount  Expected  Variance    z.value       pvalue
+1  First No Core:No Core 24.044048 22.132075 0.5678672  2.5372203 0.0055868304
+2  First       Core:Core  8.915476  6.632075 0.4851153  3.2783827 0.0005220186
+3  First    Core:No Core 20.540476 24.735849 1.8256763 -3.1049791 0.9990485376
+4 Second No Core:No Core 22.001997 22.132075 0.4986978 -0.1841983 0.5730710605
+5 Second       Core:Core  7.720851  6.632075 0.3352042  1.8805452 0.0300169049
+6 Second    Core:No Core 23.777151 24.735849 1.1140353 -0.9083061 0.8181417412
 
 > write.csv(jc_out, "barmose_jc_out.csv", row.names=FALSE)
 
@@ -285,7 +340,7 @@ null device
 > 
 > LICDClass <- interaction(barmose$class, barmose$Type, sep=" ")
 
-> barmose$LICDClass <- factor(LICDClass, levels=c("Core Hot only", "Core Clump only (Hot)", "Core No cluster", "Core Cold only", "Core Clump only (Col ..." ... [TRUNCATED] 
+> barmose$LICDClass <- factor(LICDClass, levels=c("Core Hot only", "Core Clump only (Hot)", "Core Hot Clump", "Core No cluster", "No Core Hot only", " ..." ... [TRUNCATED] 
 
 > LICDClass_map <- tm_shape(barmose, unit="m") + 
 +   tm_fill("LICDClass", palette="-viridis", title="Classes + LICD") + 
@@ -320,25 +375,38 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] Matrix_1.2-18 spdep_1.1-5   spData_0.3.8  sp_1.4-4      tmap_3.2     
-[6] stars_0.4-4   sf_0.9-6      abind_1.4-5   archdata_1.2 
+ [1] Matrix_1.2-18       spdep_1.1-5         spData_0.3.8       
+ [4] sp_1.4-4            tmap_3.2            stars_0.4-4        
+ [7] sf_0.9-6            abind_1.4-5         spatstat_1.64-1    
+[10] rpart_4.1-15        nlme_3.1-150        spatstat.data_1.4-3
+[13] archdata_1.2       
 
 loaded via a namespace (and not attached):
- [1] gtools_3.8.2       tidyselect_1.1.0   purrr_0.3.4        splines_4.0.3     
- [5] lattice_0.20-41    expm_0.999-5       vctrs_0.3.4        generics_0.0.2    
- [9] htmltools_0.5.0    viridisLite_0.3.0  base64enc_0.1-3    XML_3.99-0.5      
-[13] rlang_0.4.8        e1071_1.7-4        pillar_1.4.6       glue_1.4.2        
-[17] DBI_1.1.0          RColorBrewer_1.1-2 spDataLarge_0.5.0  lifecycle_0.2.0   
-[21] raster_3.3-15      htmlwidgets_1.5.2  leafsync_0.1.0     codetools_0.2-16  
-[25] coda_0.19-4        crosstalk_1.1.0.1  parallel_4.0.3     class_7.3-17      
-[29] leafem_0.1.3       Rcpp_1.0.5         KernSmooth_2.23-17 classInt_0.4-3    
-[33] gdata_2.18.0       lwgeom_0.2-5       spatialreg_1.1-6   leaflet_2.0.3     
-[37] deldir_0.1-29      png_0.1-7          digest_0.6.27      gmodels_2.18.1    
-[41] dplyr_1.0.2        tmaptools_3.1      grid_4.0.3         LearnBayes_2.15.1 
-[45] tools_4.0.3        magrittr_1.5       tibble_3.0.4       dichromat_2.0-0   
-[49] crayon_1.3.4       pkgconfig_2.0.3    ellipsis_0.3.1     MASS_7.3-53       
-[53] R6_2.4.1           boot_1.3-25        units_0.6-7        nlme_3.1-150      
-[57] compiler_4.0.3    
+ [1] Rcpp_1.0.5            lattice_0.20-41       deldir_0.1-29        
+ [4] gtools_3.8.2          png_0.1-7             class_7.3-17         
+ [7] digest_0.6.27         spDataLarge_0.5.0     R6_2.4.1             
+[10] coda_0.19-4           e1071_1.7-4           tensor_1.5           
+[13] pillar_1.4.6          rlang_0.4.8           gdata_2.18.0         
+[16] raster_3.3-15         gmodels_2.18.1        goftest_1.2-2        
+[19] splines_4.0.3         htmlwidgets_1.5.2     polyclip_1.10-0      
+[22] compiler_4.0.3        pkgconfig_2.0.3       tmaptools_3.1        
+[25] base64enc_0.1-3       mgcv_1.8-33           htmltools_0.5.0      
+[28] tidyselect_1.1.0      expm_0.999-5          tibble_3.0.4         
+[31] codetools_0.2-16      XML_3.99-0.5          viridisLite_0.3.0    
+[34] crayon_1.3.4          dplyr_1.0.2           spatialreg_1.1-6     
+[37] MASS_7.3-53           grid_4.0.3            lwgeom_0.2-5         
+[40] lifecycle_0.2.0       DBI_1.1.0             magrittr_1.5         
+[43] units_0.6-7           KernSmooth_2.23-17    LearnBayes_2.15.1    
+[46] leafsync_0.1.0        leaflet_2.0.3         ellipsis_0.3.1       
+[49] generics_0.0.2        vctrs_0.3.4           spatstat.utils_1.17-0
+[52] boot_1.3-25           RColorBrewer_1.1-2    tools_4.0.3          
+[55] dichromat_2.0-0       leafem_0.1.3          glue_1.4.2           
+[58] purrr_0.3.4           crosstalk_1.1.0.1     parallel_4.0.3       
+[61] classInt_0.4-3       
+
+> sf_extSoftVersion()
+          GEOS           GDAL         proj.4 GDAL_with_GEOS     USE_PROJ_H 
+    "3.9.0dev"        "3.2.0"        "7.2.0"         "true"         "true" 
 
 > sink(type = "message")
 
