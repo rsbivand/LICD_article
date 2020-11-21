@@ -1,0 +1,19 @@
+Depends: R (>= 4.0.3), spdep (>= 1.1-5), Matrix (>=1.2-18), 
+spData (>= 0.3.8), sp (>= 1.4-4), tmap (>=3.2), stars (>= 0.4-4), 
+sf (>= 0.9-6), abind (>= 1.4-5), spatstat (> 1.64-1), 
+spatstat.data (>= 1.4-3), archdata (>= 1.2), mapview (>= 2.9.4), 
+units (>= 0.6-7)
+Authors@R: c(
+	person("Francesco", "Carrer", role = "aut",
+	       comment=c(ORCID="0000-0003-4397-4502")),
+	person("Tomasz", "Kossowski", role = "aut", 
+	       comment=c(ORCID="0000-0002-9976-4398")),
+	person("Justyna", "Wilk", role = "aut",
+	       comment=c(ORCID="0000-0003-1495-2910")),
+	person("Michał", "Pietrzak", role = "aut",
+	       comment=c(ORCID="0000-0002-9263-4478")),
+	person("Roger", "Bivand", role = c("cre", "aut"),
+	       email = "Roger.Bivand@nhh.no", 
+	       comment=c(ORCID="0000-0003-2392-6140")),
+	)
+License: Creative Commons Attribution-ShareAlike 4.0 International License

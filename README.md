@@ -8,3 +8,4 @@ Script `LICD-Archaeo-Grid.R` runs the Barmose example, using data from the **arc
 
 Both scripts are run using `source(..., echo=TRUE)`, with output to `*_output.Rout` respectively. This also contains the output  of `sessionInfo()` for the output files included in this repository.
 
+File `HLC_map.zip` is a compressed stand-alone interactive webmap produced in running `LICD-Archaeo-HLC.R`; to use, uncompress and open `index.html`. It was made using the development version of **mapview** (see https://github.com/r-spatial/mapview/issues/336) as noted on line 151 of the script.
