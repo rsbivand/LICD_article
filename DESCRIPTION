@@ -1,8 +1,9 @@
-Depends: R (>= 4.0.3), spdep (>= 1.1-5), Matrix (>=1.2-18), 
-spData (>= 0.3.8), sp (>= 1.4-4), tmap (>=3.2), stars (>= 0.4-4), 
-sf (>= 0.9-6), abind (>= 1.4-5), spatstat (> 1.64-1), 
-spatstat.data (>= 1.4-3), archdata (>= 1.2), mapview (>= 2.9.4), 
-units (>= 0.6-7)
+Depends: R (>= 4.0.3), spdep (>= 1.1-5), Matrix (>= 1.2-18), 
+  spData (>= 0.3.8), sp (>= 1.4-4), tmap (>= 3.2), stars (>= 0.4-4), 
+  sf (>= 0.9-6), abind (>= 1.4-5), spatstat (> 1.64-1), 
+  spatstat.data (>= 1.4-3), archdata (>= 1.2), mapview (>= 2.9.4), 
+  units (>= 0.6-7)
+Remotes: r-spatial/mapview@7d097bc2928fe5d5be676d30956c62e98952260f
 Authors@R: c(
 	person("Francesco", "Carrer", role = "aut",
 	       comment=c(ORCID="0000-0003-4397-4502")),
