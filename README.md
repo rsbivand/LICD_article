@@ -1,5 +1,7 @@
 # LICD_article
 
+[![CODECHECK](https://codecheck.org.uk/img/codeworks-badge.svg)](https://doi.org/10.5281/zenodo.4279275)
+
 Reproduction materials for "The application of Local Indicators for Categorical Data (LICD) to explore spatial dependence in archaeological spaces" by Francesco Carrer, Tomasz M. Kossowski, Justyna Wilk, Michał B. Pietrzak and Roger Bivand
 
 Script `LICD-Archaeo-HLC.R` runs the Torridge example, downloading data from given URLs, so requires internet access; it sources local_JC0.R. It generates `Torridge_*.jpeg` and `jc_out.csv`.
